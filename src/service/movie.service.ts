@@ -2,66 +2,40 @@ import { BadRequestException, Inject, Injectable } from "@nestjs/common";
 import { UserMovie } from "../model/movie.model";
 import { MOVIE_REPOSITORY } from '../constants/index';
 import { MovieDto, MovieOutputDto } from "src/dtos/movie.dto";
-import { plainToClass } from 'class-transformer';
-import { IsEmpty, validate } from 'class-validator';
-import { IsNull } from "sequelize-typescript";
-import axios from "axios";
 
 @Injectable()
 export class MovieService {
     constructor(@Inject(MOVIE_REPOSITORY) private readonly movieRepository: typeof UserMovie) { }
 
-    // async create(post: MovieDto): Promise<UserMovie> {
-    
-    //     try {
-    //         const movieDto = new MovieDto();
-    //         if (!movieDto|| !Object.keys(movieDto).length){}
-    //         const oldMovie = await this.movieRepository.findAll();
-    //         oldMovie.forEach((value)=>{
-    //             if (value.title.toLowerCase() === post.title.toLowerCase()) return "";
-    //             const movie = await this.movieRepository.create(post);
-                
-    //             if (!movie) return "";
-    //             return movie
-    //         })
-    //         console.log(oldMovie);
-            
-    //     } catch (error) {
-    //         return error;
-    //     }
-    
-    // }
-
-    async create(post: MovieDto): Promise<UserMovie> {
-      console.log("moviedto:", post);
+    async create(moviedto: MovieDto): Promise<UserMovie> {
       
         try {
             const movieDto = new MovieDto();
             if (!movieDto || !Object.keys(movieDto).length) {}
 
-            // const oldMovie = await this.movieRepository.findAll();
-            //  console.log("movie:", oldMovie);
+            const oldMovie = await this.movieRepository.findAll();
+             console.log("movie:", oldMovie);
              
-            // for (const value of oldMovie) {
-            //     if (value.title.toLowerCase() === post.title.toLowerCase()) {
-            //         continue;
-            //     }
+            for (const value of oldMovie) {
+                if (value.title.toLowerCase() === moviedto.title.toLowerCase()) {
+                    continue;
+                }
     
-                const movie = await this.movieRepository.create(post);
+                const movie = await this.movieRepository.create(moviedto);
     
-                // if (!movie) {
-                //     continue;
-                // }
-                //  console.log("movie:", movie);
+                if (!movie) {
+                    continue;
+                }
+                 console.log("movie:", movie);
                  
                 return movie;
-            // }
+            }
     
         } catch (error) {
             return error;
         }
     }
-    async editMovie(post: MovieDto, movieId: number): Promise<UserMovie> {
+    async editMovie(moviedto: MovieDto, movieId: number): Promise<UserMovie> {
         try {
           const movieDto = new MovieDto();
           if (!movieDto || !Object.keys(movieDto).length || !movieId) {}
@@ -72,7 +46,7 @@ export class MovieService {
           if (!oldMovie) return;
       
           const updatedMovie = await this.movieRepository.update(
-            { ...post },
+            { ...moviedto },
             { where: { id: movieId } }
           );
       
@@ -150,7 +124,6 @@ export class MovieService {
       async rankAllUsersMovies( movieId: number, nrating:number, userId: number): Promise<MovieOutputDto[]> {
         try {
           const movie = await this.movieRepository.findAll({ where: {userId: userId } });
-          console.log("movies:", movie);
           
           if (!movie) {
             return;
@@ -169,8 +142,6 @@ export class MovieService {
               movieDto.userId = movie.userId;
               movieDto.createdAt = movie.createdAt;
               movieDto.updatedAt = movie.updatedAt; 
-
-              console.log("movie:", movieDto);
               
               return movieDto;
             }

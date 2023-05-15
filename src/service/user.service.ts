@@ -8,27 +8,23 @@ export class UserService {
     constructor(@Inject(USER_REPOSITORY) private readonly userRepository: typeof User) { }
 
     async createUser(user: UserDto): Promise<User> {
-        console.log("servicedto:", user);
         
         try {
-            // const oldUsers = await this.userRepository.findAll();
-            // console.log("users:", oldUsers);
+            const oldUsers = await this.userRepository.findAll();
             
-            // for (const value of oldUsers) {
-            //     if (value.email.toLowerCase() === user.email.toLowerCase()) {
-            //         continue;
-            //     }
+            for (const value of oldUsers) {
+                if (value.email.toLowerCase() === user.email.toLowerCase()) {
+                    continue;
+                }
     
                 const newUser = await this.userRepository.create(user);
-                console.log("movie:", newUser);
     
-                // if (!newUser) {
-                //     continue;
-                // }
-                 console.log("movie:", newUser);
+                if (!newUser) {
+                    continue;
+                }
                  
                 return newUser;
-            // }
+            }
         } catch (error) {
             
         }
