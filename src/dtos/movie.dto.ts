@@ -18,3 +18,15 @@ export class MovieDto {
     @IsNumber()
     yearReleased: number;
 }
+
+export class MovieOutputDto {
+    id: number;
+    title: string;
+    category: string;
+    rating: number;
+    yearReleased: number;
+    userId: number;
+    createdAt: Date;
+    updatedAt: Date;
+  }
+  

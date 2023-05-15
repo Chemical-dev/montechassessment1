@@ -1,7 +1,7 @@
 import { BadRequestException, Inject, Injectable } from "@nestjs/common";
 import { UserMovie } from "../model/movie.model";
 import { MOVIE_REPOSITORY } from '../constants/index';
-import { MovieDto } from "src/dtos/movie.dto";
+import { MovieDto, MovieOutputDto } from "src/dtos/movie.dto";
 import { plainToClass } from 'class-transformer';
 import { IsEmpty, validate } from 'class-validator';
 import { IsNull } from "sequelize-typescript";
@@ -117,4 +117,70 @@ export class MovieService {
         
         return await this.movieRepository.findAll();
       } 
+
+      async getAllUsersMovies(userId: number): Promise<MovieOutputDto[]> {
+        try {
+          const movie = await this.movieRepository.findAll({ where: {userId: userId } });
+      
+          if (!movie) {
+            return;
+          }
+
+          const movieDtos: MovieOutputDto[] = movie.map(movie => {
+            const movieDto = new MovieOutputDto();
+            movieDto.id = movie.id;
+            movieDto.title = movie.title;
+            movieDto.category = movie.category;
+            movieDto.rating = movie.rating;
+            movieDto.yearReleased = movie.yearReleased;
+            movieDto.userId = movie.userId;
+            movieDto.createdAt = movie.createdAt;
+            movieDto.updatedAt = movie.updatedAt; 
+
+            return movieDto;
+          });
+
+          return movieDtos;
+
+        } catch (error) {
+          // handle error
+        }
+      }
+
+      async rankAllUsersMovies( movieId: number, nrating:number, userId: number): Promise<MovieOutputDto[]> {
+        try {
+          const movie = await this.movieRepository.findAll({ where: {userId: userId } });
+          console.log("movies:", movie);
+          
+          if (!movie) {
+            return;
+          }
+
+          const movieDtos: MovieOutputDto[] = movie.map(movie => {
+         
+            if (movie.id = movieId){
+              movie.rating = nrating;
+              const movieDto = new MovieOutputDto();
+              movieDto.id = movie.id;
+              movieDto.title = movie.title;
+              movieDto.category = movie.category;
+              movieDto.rating = movie.rating;
+              movieDto.yearReleased = movie.yearReleased;
+              movieDto.userId = movie.userId;
+              movieDto.createdAt = movie.createdAt;
+              movieDto.updatedAt = movie.updatedAt; 
+
+              console.log("movie:", movieDto);
+              
+              return movieDto;
+            }
+            
+          });
+
+          return movieDtos;
+
+        } catch (error) {
+          // handle error
+        }
+      }
 }
