@@ -17,7 +17,7 @@ const up = async (queryInterface) => {
       allowNull: false,
     },
     rating: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.DECIMAL,
       allowNull: false,
     },
     yearReleased: {

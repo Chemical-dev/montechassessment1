@@ -3,6 +3,7 @@ import { Sequelize } from 'sequelize-typescript';
 import { SEQUELIZE, DEVELOPMENT, TEST, PRODUCTION } from '../constants';
 import { databaseConfig } from './database.config';
 import { UserMovie } from '../model/movie.model';
+import { User } from 'src/model/user.model';
 
 export const databaseProviders = [
   {
@@ -24,8 +25,12 @@ export const databaseProviders = [
       }
       console.log(config);
       const sequelize = new Sequelize(config);
-      sequelize.addModels([UserMovie]);
-      console.log(sequelize);
+      sequelize.addModels([UserMovie, User]);
+
+      // Establish the associations
+      // User.hasMany(UserMovie, { foreignKey: 'userId', as: 'usermovies' });
+      // UserMovie.belongsTo(User, { foreignKey: 'userId', as: 'movieUser' });
+      // console.log(sequelize);
     //    await sequelize.sync();
       return sequelize;
     },

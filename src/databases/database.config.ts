@@ -4,7 +4,7 @@ export const databaseConfig: IDatabaseConfig = {
   development: {
     username: process.env.DB_USER || "postgres",
     password: process.env.DB_PASS || "chemical",
-    database: process.env.DB_NAME_DEVELOPMENT || "User",
+    database: process.env.DB_NAME_DEVELOPMENT || "Movie",
     host: process.env.DB_HOST || "localhost",
     port: process.env.DB_PORT || 5432,
     dialect: process.env.DB_DIALECT || "postgres",

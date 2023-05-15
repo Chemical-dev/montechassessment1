@@ -43,5 +43,11 @@ export class MovieController {
     return this.movieService.findAll();
   }
 
+  // @Post('/mdb/add')
+  // async addMovies(@Body() listId: string):Promise<void>  {
+    
+  //   return this.movieService.addMovieToList(listId);
+  // }
+
   
 }

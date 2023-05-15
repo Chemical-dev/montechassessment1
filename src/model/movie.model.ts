@@ -1,5 +1,6 @@
 import { Table, Column, Model, DataType, ForeignKey, BelongsTo } from 'sequelize-typescript';
 import * as moment from 'moment';
+import { User } from './user.model';
 
 @Table({ tableName: 'UserMovie' })
 export class UserMovie extends Model<UserMovie> {
@@ -16,11 +17,11 @@ export class UserMovie extends Model<UserMovie> {
     category: string;
 
     @Column({
-        type: DataType.INTEGER,
+        type: DataType.DECIMAL,
         allowNull: false,
         defaultValue: 0,
-      })
-      rating: number;
+    })
+    rating: number;
 
     @Column({
         type: DataType.INTEGER,
@@ -28,14 +29,20 @@ export class UserMovie extends Model<UserMovie> {
     })
     yearReleased: number;
 
+    @ForeignKey(() => User)
+    @Column
+    userId: number;
+
+    @BelongsTo(() => User, 'id')
+    user: User;
+
     get yearReleasedFormatted(): string {
         const date = new Date(this.yearReleased, 0, 1); // assuming yearReleased is a 4-digit number
         return moment(date).format('YYYY');
-      }
-    
-      set yearReleasedFormatted(value: string) {
+    }
+
+    set yearReleasedFormatted(value: string) {
         const date = moment(value, 'YYYY').toDate();
         this.yearReleased = date.getFullYear();
-      }
+    }
 }
-

@@ -5,6 +5,7 @@ import { MovieDto } from "src/dtos/movie.dto";
 import { plainToClass } from 'class-transformer';
 import { IsEmpty, validate } from 'class-validator';
 import { IsNull } from "sequelize-typescript";
+import axios from "axios";
 
 @Injectable()
 export class MovieService {
@@ -32,26 +33,29 @@ export class MovieService {
     // }
 
     async create(post: MovieDto): Promise<UserMovie> {
+      console.log("moviedto:", post);
+      
         try {
             const movieDto = new MovieDto();
             if (!movieDto || !Object.keys(movieDto).length) {}
-    
-            const oldMovie = await this.movieRepository.findAll();
-    
-            for (const value of oldMovie) {
-                if (value.title.toLowerCase() === post.title.toLowerCase()) {
-                    continue;
-                }
+
+            // const oldMovie = await this.movieRepository.findAll();
+            //  console.log("movie:", oldMovie);
+             
+            // for (const value of oldMovie) {
+            //     if (value.title.toLowerCase() === post.title.toLowerCase()) {
+            //         continue;
+            //     }
     
                 const movie = await this.movieRepository.create(post);
     
-                if (!movie) {
-                    continue;
-                }
-                 console.log("movie:", movie);
+                // if (!movie) {
+                //     continue;
+                // }
+                //  console.log("movie:", movie);
                  
                 return movie;
-            }
+            // }
     
         } catch (error) {
             return error;
@@ -112,7 +116,5 @@ export class MovieService {
       async findAll(): Promise<UserMovie[]> {
         
         return await this.movieRepository.findAll();
-      }
-      
-      
+      } 
 }
