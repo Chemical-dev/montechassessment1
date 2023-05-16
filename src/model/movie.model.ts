@@ -37,7 +37,7 @@ export class UserMovie extends Model<UserMovie> {
     user: User;
 
     get yearReleasedFormatted(): string {
-        const date = new Date(this.yearReleased, 0, 1); // assuming yearReleased is a 4-digit number
+        const date = new Date(this.yearReleased, 0, 1);
         return moment(date).format('YYYY');
     }
 

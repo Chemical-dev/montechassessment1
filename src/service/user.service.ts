@@ -26,6 +26,7 @@ export class UserService {
                 return newUser;
             }
         } catch (error) {
+            throw new Error("Something Went Wrong");
             
         }
     }

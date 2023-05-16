@@ -43,20 +43,22 @@ export class MovieService {
           const oldMovie = await this.movieRepository.findOne({ where: { id: movieId } });
           console.log(oldMovie);
       
-          if (!oldMovie) return;
+          if (!oldMovie) { throw new Error('Movie not found');}
       
           const updatedMovie = await this.movieRepository.update(
             { ...moviedto },
             { where: { id: movieId } }
           );
-      
-          console.log("updated:", updatedMovie);
+  
           if (updatedMovie[0] != 1) {
-            return;
-          } else {
-            return oldMovie;
+            throw new Error('Movie not updated');
           }
-        } catch (error) {}
+          
+          return await this.movieRepository.findOne({ where: { id: movieId } });
+          
+        } catch (error) {
+          throw error;
+        }
       }
       
 
@@ -64,12 +66,12 @@ export class MovieService {
         try {
           const oldMovie = await this.movieRepository.findOne({ where: { id: movieId } });
           if (!oldMovie) {
-            return;
+            throw new Error('Movie not found');
           }
       
           await this.movieRepository.destroy({ where: { id: movieId } });
         } catch (error) {
-          // handle error
+          throw error;
         }
       }
 
@@ -78,12 +80,12 @@ export class MovieService {
           const movie = await this.movieRepository.findOne({ where: { id: movieId } });
       
           if (!movie) {
-            return;
+            throw new Error('Movie not found');
           }
       
           return movie;
         } catch (error) {
-          // handle error
+          throw error;
         }
       }
 
@@ -94,64 +96,52 @@ export class MovieService {
 
       async getAllUsersMovies(userId: number): Promise<MovieOutputDto[]> {
         try {
-          const movie = await this.movieRepository.findAll({ where: {userId: userId } });
+          const movies = await this.movieRepository.findAll({ where: { userId: userId } });
       
-          if (!movie) {
-            return;
+          if (!movies || movies.length === 0) {
+            throw new Error('No movies found for this user');
           }
-
-          const movieDtos: MovieOutputDto[] = movie.map(movie => {
-            const movieDto = new MovieOutputDto();
-            movieDto.id = movie.id;
-            movieDto.title = movie.title;
-            movieDto.category = movie.category;
-            movieDto.rating = movie.rating;
-            movieDto.yearReleased = movie.yearReleased;
-            movieDto.userId = movie.userId;
-            movieDto.createdAt = movie.createdAt;
-            movieDto.updatedAt = movie.updatedAt; 
-
+      
+          const movieDtos: MovieOutputDto[] = movies.map((movie) => {
+            const movieDto = new MovieOutputDto(movie);
             return movieDto;
           });
-
+      
           return movieDtos;
-
         } catch (error) {
-          // handle error
+          throw error;
         }
       }
+      
 
-      async rankAllUsersMovies( movieId: number, nrating:number, userId: number): Promise<MovieOutputDto[]> {
+      async rankAllUsersMovies(movieId: number, nrating: number, userId: number): Promise<MovieOutputDto[]> {
         try {
-          const movie = await this.movieRepository.findAll({ where: {userId: userId } });
-          
-          if (!movie) {
-            return;
+          const movies = await this.movieRepository.findAll({ where: { userId: userId } });
+      
+          if (!movies || movies.length === 0) {
+            throw new Error('No Movie(s) found for this user');
           }
-
-          const movieDtos: MovieOutputDto[] = movie.map(movie => {
-         
-            if (movie.id = movieId){
+      
+          const updatedMovies: UserMovie[] = [];
+          const movieDtos: MovieOutputDto[] = [];
+      
+          for (const movie of movies) {
+            if (movie.id === movieId) {
               movie.rating = nrating;
-              const movieDto = new MovieOutputDto();
-              movieDto.id = movie.id;
-              movieDto.title = movie.title;
-              movieDto.category = movie.category;
-              movieDto.rating = movie.rating;
-              movieDto.yearReleased = movie.yearReleased;
-              movieDto.userId = movie.userId;
-              movieDto.createdAt = movie.createdAt;
-              movieDto.updatedAt = movie.updatedAt; 
-              
-              return movieDto;
+              await this.movieRepository.update({ rating: nrating }, { where: { id: movieId } });
+              updatedMovies.push(movie);
             }
-            
-          });
-
+            movieDtos.push(new MovieOutputDto(movie));
+          }
+      
+          if (updatedMovies.length === 0) {
+            throw new Error('Movie not found');
+          }
+      
           return movieDtos;
-
         } catch (error) {
-          // handle error
+          throw error;
         }
       }
+      
 }
