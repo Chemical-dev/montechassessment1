@@ -17,6 +17,12 @@ export class UserMovie extends Model<UserMovie> {
     category: string;
 
     @Column({
+      type: DataType.TEXT,
+      allowNull: false,
+    })
+      rank: string;
+
+    @Column({
         type: DataType.DECIMAL,
         allowNull: false,
         defaultValue: 0,
